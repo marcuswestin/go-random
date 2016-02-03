@@ -1,7 +1,9 @@
 package random
 
 import (
+	cryptoRand "crypto/rand"
 	"encoding/base64"
+	"errors"
 	"io"
 	"math"
 	"math/rand"
@@ -28,13 +30,12 @@ func Digits(numDigits int) string {
 // UID returns a base64-encoded random string. numChars must be a multiple of 4.
 func UID(numChars int) (uid string, err error) {
 	if numChars%4 != 0 {
-		err = errors.New(nil, "UID length must be a multiple of 4")
+		err = errors.New("UID length must be a multiple of 4")
 		return
 	}
 	buf := make([]byte, numChars)
-	_, stdErr := io.ReadFull(rand.Reader, buf)
-	if stdErr != nil {
-		err = errors.Wrap(stdErr, nil)
+	_, err = io.ReadFull(cryptoRand.Reader, buf)
+	if err != nil {
 		return
 	}
 
